@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-int main()
+int main(int argc, char *argv, char *envp)
 {
 	const pid_t pid = fork();
 	if (pid < 0) {
@@ -17,9 +17,7 @@ int main()
 		waitpid(pid, &status, 0);
 		printf("Ret code: %d\n", WEXITSTATUS(status));
 	} else {
-		for (char c = 'n'; tolower(c) !='y';scanf("%c", &c))
-			printf("Kill me?(y/n):\n");
-		exit(42);
+		execl(*argv, 0);
 	}
 	return 0;
 }
