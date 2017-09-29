@@ -7,17 +7,20 @@
 
 int main(int argc, char *argv, char *envp)
 {
-	const pid_t pid = fork();
+	for(i = 1; i < argc; i++)
+	{
+		const pid_t pid = fork();
 	if (pid < 0) {
 		printf("fork() error\n");
 		return -1;
-	}
+		}
 	if (pid) {
 		int status;
 		waitpid(pid, &status, 0);
 		printf("Ret code: %d\n", WEXITSTATUS(status));
-	} else {
-		execl(*argv, 0);
+		} else {
+			execvl(argv[i], " ", $PATH);
+		}
 	}
 	return 0;
 }
