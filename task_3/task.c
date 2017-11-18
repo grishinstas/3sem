@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 int main()
 {
   int fd = open("a.txt", O_RDONLY);
@@ -27,11 +28,12 @@ int main()
     exit(-1);
   }
   close(dst);
-  void * n = mmap(m, length, PROT_READ, MAP_SHARED, fd, 0);
-  if(n != m) {
+  void * n = mmap(NULL, length, PROT_READ, MAP_SHARED, fd, 0);
+  if(n == MAP_FAILED) {
     printf("mmap error");
     exit(-1);
   }
   close(fd);
+  memcpy(m, n, length);
   return 0;
 }
