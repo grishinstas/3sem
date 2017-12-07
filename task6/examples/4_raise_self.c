@@ -19,9 +19,9 @@ int main() {
         while(read(fd, *a, 1) > 0)
             for(n = 1; n; n *= 2)
                 if(a & n)
-                    kill(pid, SIGUSR1);
-                else
                     kill(pid, SIGUSR2);
+                else
+                    kill(pid, SIGUSR1);
         close(fd);
         kill(pid, SIGKILL);
         return 0;
