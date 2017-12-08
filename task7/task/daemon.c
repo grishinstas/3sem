@@ -21,16 +21,19 @@ int main()
       close(stdin);
       close(stdout);
       close(stderr);
-      DIR *d = opendir("dir");
+      DIR *d1 = opendir("dir");
+      DIR *d2 = opendir("home");
       while (1) {
          pid_t p1 = fork();
          if (p1)
             wait();
          else
             execlp("cp", "-r", "home", "dir", 0);
-         closedir(d);
+         closedir(d1);
+         closedir(d2);
          sleep(60);
-         d = opendir("dir");
+         d1 = opendir("dir");
+         d2 = opendir("home");
          int fd = open("log.diff", O_WRONLY | O_CREAT);
          pid_t p2 = fork();
          if (p2)
