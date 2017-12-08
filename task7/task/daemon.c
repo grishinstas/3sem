@@ -1,10 +1,43 @@
-/*
-Разработайте программу-демон, которая будет следить за содержимым/состоянием некоторой директории на файловой системе.
-Варианты программы (выберите любой):
-
-1) subrevision-daemon: демон, отслеживающий рекурсивно изменения любых файлов и директорий внутри нужной директории, и записывающий их в некоторый лог-файл. Например, если между двумя итерациями считывания содержимого данные в файле 1.txt изменились, вывести разность между ними в git-like виде (+ данные /-данные) или в diff-like (> ревизия n-1 / < ревизия n). Хранить и выводить можно только поледнюю ревизию.
- 
-2) inotify-daemon: демон, отслеживающий обращения к содержимому нужной директории через интерфейс inotify-подсистемы ядра Linux: получите inotify-файловый дескриптор и отслеживайте системные вызовы. Демон должен выводить данные в лог в формате время: вызов(некоторая информация: параметры, данные и т.д)
-
-Обязательное условие: демон (на то он и демон) должен быть отвязан от любого терминала, устойчив к посылке сигналов, кроме явных SIGKILL и SIGSTOP, сохранять свой PID, не реагировать на нажатия комбинаций клавиш.
-*/
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <stdlib.h>
+int main()
+{
+ ` pid_t pid = fork();
+   if (pid) {
+      int fd = open("pid.txt", O_WRONLY | O_CREAT);
+      pid = getpid() + 1;
+      write(fd, &pid, sizeof(pid_t));
+      close(fd);
+      return 0;
+   }
+   else {
+      setsid();
+      chdir("\");
+      close(stdin);
+      close(stdout);
+      close(stderr);
+      DIR *d = opendir("dir");
+      while (1) {
+         pid_t p1 = fork();
+         if (p1)
+            wait();
+         else
+            execlp("cp", "-r", "home", "dir", 0);
+         closedir(d);
+         sleep(60);
+         d = opendir("dir");
+         int fd = open("log.diff", O_WRONLY | O_CREAT);
+         pid_t p2 = fork();
+         if (p2)
+            wait();
+         else
+            execlp("diff", "-r", "dir", "home", ">", "log.diff", 0);
+         close(fd);
+      }
+      return 0;
+   }
