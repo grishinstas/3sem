@@ -7,11 +7,11 @@
 
 int main(int argc, char *argv, char *envp)
 {
-	for(i = 1; i < argc; i++)
+	while(1)
 	{
 		const pid_t pid = fork();
 	if (pid < 0) {
-		printf("fork() error\n");
+		printf("fork error\n");
 		return -1;
 		}
 	if (pid) {
@@ -19,7 +19,7 @@ int main(int argc, char *argv, char *envp)
 		waitpid(pid, &status, 0);
 		printf("Ret code: %d\n", WEXITSTATUS(status));
 		} else {
-			execvl(argv[i], " ", $PATH);
+			execvl(*argv, " ", $PATH);
 		}
 	}
 	return 0;
