@@ -7,7 +7,7 @@
 #include <stdlib.h>
 int main()
 {
- ` pid_t pid = fork();
+  pid_t pid = fork();
    if (pid) {
       int fd = open("pid.txt", O_WRONLY | O_CREAT);
       pid = getpid() + 1;
@@ -17,7 +17,7 @@ int main()
    }
    else {
       setsid();
-      chdir("\");
+      chdir("/");
       close(stdin);
       close(stdout);
       close(stderr);
