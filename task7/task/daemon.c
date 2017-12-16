@@ -21,25 +21,25 @@ int main()
       close(stdin);
       close(stdout);
       close(stderr);
-      DIR *d1 = opendir("dir");
-      DIR *d2 = opendir("home");
+      DIR *d1 = opendir("/dir");
+      DIR *d2 = opendir("/home");
       while (1) {
          pid_t p1 = fork();
          if (p1)
-            wait();
+            wait(NULL);
          else
-            execlp("cp", "-r", "home", "dir", 0);
+            execlp("cp", "cp", "-r", "/home", "/dir", 0);
          closedir(d1);
          closedir(d2);
          sleep(60);
-         d1 = opendir("dir");
-         d2 = opendir("home");
+         d1 = opendir("/dir");
+         d2 = opendir("/home");
          int fd = open("log.diff", O_WRONLY | O_CREAT);
          pid_t p2 = fork();
          if (p2)
-            wait();
+            wait(NULL);
          else
-            execlp("diff", "-r", "dir", "home", ">", "log.diff", 0);
+            execlp("diff", "diff", "-r", "/dir", "/home", ">", "log.diff", 0);
          close(fd);
       }
       return 0;
