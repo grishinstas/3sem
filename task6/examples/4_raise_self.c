@@ -10,19 +10,21 @@ void handler2(int sig, char *a, char *n) {
     *a += *n;
     *n *= 2;
 }
- 
 int main() {
     pid_t pid = fork();
     if (pid) {
         pid = getpid() + 1;
         int fd1 = open("a.txt", O_RDONLY);
-        while(read(fd, *a, 1) > 0)
+        int fd2 = open("b.txt", O_WRONLY | O_CREAT | O_TRUNC);
+        while(read(fd1, *a, 1) > 0) {
             for(n = 1; n; n *= 2)
                 if(a & n)
                     kill(pid, SIGUSR2);
                 else
                     kill(pid, SIGUSR1);
+        }
         close(fd1);
+        close(fd2);
         kill(pid, SIGKILL);
         return 0;
     }
@@ -32,12 +34,13 @@ int main() {
         char *a, *n;
         *a = 0;
         *n = 1;
-        int fd2 = open("b.txt", O_WRONLY | O_CREAT | O_TRUNC);
         while(1)
             if (*n == 0) {
+                kill(getppid(), SIGSTOP);
                 write(fd2, a, 1);
                 *a = 0;
                 *n = 1;
+                kill(getppid(), SIGCONT);
             }
         return 0;
     }
