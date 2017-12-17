@@ -7,8 +7,6 @@
 
 int main(int argc, char **argv, char *envp)
 {
-                        char path[255], pathargs[4096];
-                        int i;
                         if(argc > 1) {
                                 pid_t pid = fork();
                                 if (pid) {
