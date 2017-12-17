@@ -54,7 +54,7 @@ int main(int argc, char **argv, char *envp)
                                 execvp(*pointer, pointer);
                                 printf("exec error\n");
                                 return -1;
-                                }
+                                } 
         }
         return 0;
 }
