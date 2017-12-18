@@ -5,42 +5,63 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <stdlib.h>
+#define primary_dir "/home/stas/labs"
+#define temporary_dir "/home/stas/dir"
 int main()
 {
   pid_t pid = fork();
    if (pid) {
-      int fd = open("pid.txt", O_WRONLY | O_CREAT);
-      pid = getpid() + 1;
-      write(fd, &pid, sizeof(pid_t));
+      umask(0);
+      char buf[5];
+      sprintf(buf, "%hu", pid);
+      int i;
+      for(i = 0; i < 5; i++)
+          if(buf[i] < '0' || buf[i] > '9')
+                buf[i] = ' ';
+      int fd = open("pid.txt", O_WRONLY | O_CREAT | O_TRUNC, 0666);
+      write(fd, buf, 5);
       close(fd);
       return 0;
    }
    else {
+      umask(0);
       setsid();
       chdir("/");
-      close(stdin);
-      close(stdout);
-      close(stderr);
-      DIR *d1 = opendir("/dir");
-      DIR *d2 = opendir("/home");
-      while (1) {
-         pid_t p1 = fork();
-         if (p1)
+      close((int)stdin);
+      close((int)stdout);
+      close((int)stderr);
+         while (1) {
+            pid_t p = fork();
+        if(p)
+                wait(NULL);
+        else {
+                execlp("rm", "rm", "-r", "-f", temporary_dir , 0); //Remove previous state
+        }
+        int fd2 = open("/dev/null", O_WRONLY | O_CREAT | O_TRUNC);
+        pid_t p1 = fork();
+        if (p1) {
             wait(NULL);
-         else
-            execlp("cp", "cp", "-r", "/home", "/dir", 0);
-         closedir(d1);
-         closedir(d2);
+            close(fd2);
+        }
+        else {
+            dup2(fd2,2); //redirect STDERR to /dev/null
+            dup2(fd2,1); //redirect STDOUT to /dev/null
+            execlp("cp", "cp", "-r", primary_dir, temporary_dir, 0);
+        }
          sleep(60);
-         d1 = opendir("/dir");
-         d2 = opendir("/home");
-         int fd = open("log.diff", O_WRONLY | O_CREAT);
+         int fd3 = open("/home/stas/Documents/log.diff", O_WRONLY | O_CREAT | O_TRUNC , 0666);
          pid_t p2 = fork();
-         if (p2)
+         if (p2) {
             wait(NULL);
-         else
-            execlp("diff", "diff", "-r", "/dir", "/home", ">", "log.diff", 0);
-         close(fd);
+            close(fd3);
+         }
+         else {
+            dup2(fd3,1);
+            dup2(fd3,2);
+            execlp("diff", "diff", "-r", temporary_dir, primary_dir, 0);
+         }
+      }
       }
       return 0;
    }
+
