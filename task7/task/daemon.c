@@ -27,9 +27,9 @@ int main()
       umask(0);
       setsid();
       chdir("/");
-      close((int)stdin);
-      close((int)stdout);
-      close((int)stderr);
+      close(0);
+      close(1);
+      close(2);
          while (1) {
             pid_t p = fork();
         if(p)
