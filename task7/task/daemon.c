@@ -37,7 +37,7 @@ int main()
         else {
                 execlp("rm", "rm", "-r", "-f", temporary_dir , 0); //Remove previous state
         }
-        int fd2 = open("/dev/null", O_WRONLY | O_CREAT | O_TRUNC);
+        int fd2 = open("/dev/null", O_WRONLY | O_CREAT | O_APPEND);
         pid_t p1 = fork();
         if (p1) {
             wait(NULL);
